@@ -1,0 +1,375 @@
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 1
+
+
+
+
+
+       MCS-51 Family Macro Assembler   A S E M - 5 1   V 1.3
+       =====================================================
+
+
+
+	Source File:	D:\Data Kuliah\SEMESTER 5\infrared\dinda.asm
+	Object File:	D:\Data Kuliah\SEMESTER 5\infrared\dinda.hex
+	List File:	D:\Data Kuliah\SEMESTER 5\infrared\dinda.lst
+
+
+
+ Line  I  Addr  Code            Source
+
+    1:
+    2:
+    3:		N      0000	RB0     EQU     000H    ; Select Register Bank 0
+    4:				;%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    5:				;		PORT DECLERATION
+    6:				;%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    7:		B      0084	CLK	EQU	P0.4
+    8:		B      0080	START	EQU	P0.0
+    9:		B      0081	EOC	EQU	P0.1
+   10:
+   11:		B      00A4	DATA1	EQU	P2.4
+   12:		B      00A5	DATA2	EQU	P2.5
+   13:		B      00A6	DATA3	EQU	P2.6
+   14:		B      00A7	DATA4	EQU	P2.7
+   15:		B      0082	DATA5	EQU	P0.2
+   16:		B      0086	DATA6	EQU	P0.6
+   17:		B      0085	DATA7	EQU	P0.5
+   18:		B      0087	DATA8	EQU	P0.7
+   19:
+   20:		B      00A3	ALE	EQU	P2.3
+   21:
+   22:		B      00A0	ADD_A	EQU	P2.0
+   23:		B      00A1	ADD_B	EQU	P2.1
+   24:		B      00A2	ADD_C	EQU	P2.2
+   25:
+   26:		B      0083	OUT_EN	EQU	P0.3
+   27:
+   28:		B      00B3	FRONT		EQU	P3.3
+   29:		B      00B5	LEFT		EQU	P3.5
+   30:		B      00B4	RIGHT		EQU	P3.4
+   31:
+   32:		B      00B0	BLOWER	EQU	P3.0
+   33:
+   34:		D      0090	MOTOR		EQU	P1
+   35:
+   36:		B      0090	COIL1		EQU	P1.0
+   37:		B      0091	COIL2		EQU	P1.1
+   38:		B      0092	COIL3		EQU	P1.2
+   39:		B      0093	COIL4		EQU	P1.3
+   40:
+   41:		B      0094	COIL5		EQU	P1.4
+   42:		B      0095	COIL6		EQU	P1.5
+   43:		B      0096	COIL7		EQU	P1.6
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 2
+
+
+
+ Line  I  Addr  Code            Source
+
+   44:		B      0097	COIL8		EQU	P1.7
+   45:
+   46:
+   47:				DSEG            ; This is internal data memory
+   48:		N	 20	ORG     20H     ; Bit adressable memory
+   49:	    20	N	 01	VALUE:	DS	1
+   50:
+   51:	    21	N	 01	STACK:	DS	1
+   52:				CSEG            ; Code begins here
+   53:
+   54:				;---------==========----------==========---------=========---------
+   55:				;  Main routine. Program execution starts here.
+   56:				;---------==========----------==========---------=========---------
+   57:		N      0000			ORG     00H    ; Reset
+   58:	  0000	01 0E				AJMP MAIN
+   59:
+   60:		N      000B			ORG 000BH
+   61:	  000B	B2 84				CPL CLK
+   62:	  000D	32				RETI
+   63:				;---------==========----------==========---------=========---------
+   64:	  000E			MAIN:
+   65:	  000E	75 D0 00	         MOV    PSW,#RB0    		  ; Select register bank 0
+   66:	  0011	75 81 60	        	MOV    SP,#60H
+   67:	  0014	75 89 02	        	MOV TMOD,#02H
+   68:	  0017	75 8C A4	        	MOV TH0,#0A4H
+   69:	  001A	75 A8 82	        	MOV IE,#82H
+   70:	  001D	D2 8C		        	SETB TR0
+   71:	  001F	C2 B0		        	CLR BLOWER
+   72:	  0021	12 00 24	        	CALL READ_ADC
+   73:
+   74:
+   75:
+   76:
+   77:
+   78:
+   79:
+   80:
+   81:
+   82:				;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+   83:				;		INITIALIZE ADC CHIP
+   84:				;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+   85:	  0024			READ_ADC:
+   86:	  0024	C2 80		        	CLR START
+   87:	  0026	C2 A3		        	CLR ALE
+   88:	  0028	C2 83		        	CLR OUT_EN
+   89:	  002A	D2 A0		        	SETB ADD_A
+   90:	  002C	D2 A1		        	SETB ADD_B
+   91:	  002E	C2 A2		        	CLR ADD_C
+   92:	  0030	D2 A3		        	SETB ALE
+   93:	  0032	00		        	NOP
+   94:	  0033	00		        	NOP
+   95:	  0034	00		        	NOP
+   96:	  0035	00		        	NOP
+   97:	  0036	C2 A3		        	CLR ALE
+   98:	  0038	D2 80		        	SETB START
+   99:	  003A	00		        	NOP
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 3
+
+
+
+ Line  I  Addr  Code            Source
+
+  100:	  003B	00		        	NOP
+  101:	  003C	00		        	NOP
+  102:	  003D	00		        	NOP
+  103:	  003E	C2 80		        	CLR START
+  104:	  0040	12 00 90	        	CALL DELAY
+  105:	  0043	D2 81		        	SETB EOC
+  106:	  0045	30 81 FD	        	JNB EOC,$
+  107:	  0048	D2 83		        	SETB OUT_EN
+  108:	  004A	00		        	NOP
+  109:	  004B	00		        	NOP
+  110:	  004C	00		        	NOP
+  111:	  004D	00		        	NOP
+  112:	  004E	C2 83		        	CLR OUT_EN
+  113:	  0050	12 00 54	        	CALL READ_TEMP
+  114:	  0053	22		        	RET
+  115:				;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  116:				;			READ TEMPERATURE
+  117:				;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  118:	  0054			READ_TEMP:
+  119:	  0054	D2 A4					SETB DATA1
+  120:	  0056	D2 A5					SETB DATA2
+  121:	  0058	D2 A6					SETB DATA3
+  122:	  005A	D2 A7					SETB DATA4
+  123:	  005C	D2 82					SETB DATA5
+  124:	  005E	D2 86					SETB DATA6
+  125:	  0060	D2 85					SETB DATA7
+  126:	  0062	D2 87					SETB DATA8
+  127:	  0064	75 20 00				MOV VALUE,#00H
+  128:	  0067	30 A4 02				JNB DATA1,DF1
+  129:	  006A	D2 07					SETB VALUE.7
+  130:	  006C	30 A5 02	DF1:		JNB DATA2,DF2
+  131:	  006F	D2 06					SETB VALUE.6
+  132:	  0071	30 A6 02	DF2:		JNB DATA3,DF3
+  133:	  0074	D2 05					SETB VALUE.5
+  134:	  0076	30 A7 02	DF3:		JNB DATA4,DF4
+  135:	  0079	D2 04					SETB VALUE.4
+  136:	  007B	30 82 02	DF4:		JNB DATA5,DF5
+  137:	  007E	D2 03					SETB VALUE.3
+  138:	  0080	30 86 02	DF5:		JNB DATA6,DF6
+  139:	  0083	D2 02					SETB VALUE.2
+  140:	  0085	30 85 02	DF6:		JNB DATA7,DF7
+  141:	  0088	D2 01					SETB VALUE.1
+  142:	  008A	30 87 02	DF7:		JNB DATA8,DF8
+  143:	  008D	D2 00					SETB VALUE.0
+  144:	  008F	22		DF8:		RET
+  145:				;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  146:	  0090			DELAY:
+  147:	  0090	78 35					MOV R0,#35H
+  148:	  0092	79 FF		RP2:		MOV R1,#0FFH
+  149:	  0094	00		RP1:		NOP
+  150:	  0095	D9 FD					DJNZ R1,RP1
+  151:	  0097	D8 F9					DJNZ R0,RP2
+  152:	  0099	22					RET
+  153:
+  154:	  009A			DELAYS1:
+  155:	  009A	78 FF					MOV R0,#0FFH
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 4
+
+
+
+ Line  I  Addr  Code            Source
+
+  156:	  009C	79 FF		RP2X:		MOV R1,#0FFH
+  157:	  009E	00		RP1X:		NOP
+  158:	  009F	D9 FD					DJNZ R1,RP1X
+  159:	  00A1	D8 F9					DJNZ R0,RP2X
+  160:	  00A3	22					RET
+  161:
+  162:
+  163:	  00A4			DELAYF:
+  164:	  00A4	78 FF					MOV R0,#0FFH
+  165:	  00A6	79 FF		RRP2:		MOV R1,#0FFH
+  166:	  00A8	00		RRP1:		NOP
+  167:	  00A9	D9 FD					DJNZ R1,RRP1
+  168:	  00AB	D8 F9					DJNZ R0,RRP2
+  169:	  00AD	22					RET
+  170:
+  171:				; **********************************************************
+  172:				END
+  173:
+
+
+
+
+
+                     register banks used:  ---
+
+                     no errors
+
+
+
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 5
+
+
+
+
+
+	       L I S T   O F   S Y M B O L S
+	       =============================
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+??ASEM_51			  NUMBER    8051
+??VERSION			  NUMBER    0130
+AC				  BIT	      D6
+ACC				  DATA	      E0
+ADD_A				  NUMBER    00A0	  22
+ADD_B				  NUMBER    00A1	  23
+ADD_C				  NUMBER    00A2	  24
+ALE				  NUMBER    00A3	  20
+B				  DATA	      F0
+BLOWER				  NUMBER    00B0	  32
+CLK				  NUMBER    0084	   7
+COIL1				  NUMBER    0090	  36
+COIL2				  NUMBER    0091	  37
+COIL3				  NUMBER    0092	  38
+COIL4				  NUMBER    0093	  39
+COIL5				  NUMBER    0094	  41
+COIL6				  NUMBER    0095	  42
+COIL7				  NUMBER    0096	  43
+COIL8				  NUMBER    0097	  44
+CY				  BIT	      D7
+DATA1				  NUMBER    00A4	  11
+DATA2				  NUMBER    00A5	  12
+DATA3				  NUMBER    00A6	  13
+DATA4				  NUMBER    00A7	  14
+DATA5				  NUMBER    0082	  15
+DATA6				  NUMBER    0086	  16
+DATA7				  NUMBER    0085	  17
+DATA8				  NUMBER    0087	  18
+DELAY				  CODE	    0090	 146
+DELAYF				  CODE	    00A4	 163
+DELAYS1				  CODE	    009A	 154
+DF1				  CODE	    006C	 130
+DF2				  CODE	    0071	 132
+DF3				  CODE	    0076	 134
+DF4				  CODE	    007B	 136
+DF5				  CODE	    0080	 138
+DF6				  CODE	    0085	 140
+DF7				  CODE	    008A	 142
+DF8				  CODE	    008F	 144
+DPH				  DATA	      83
+DPL				  DATA	      82
+EA				  BIT	      AF
+EOC				  NUMBER    0081	   9
+ES				  BIT	      AC
+ET0				  BIT	      A9
+ET1				  BIT	      AB
+EX0				  BIT	      A8
+EX1				  BIT	      AA
+EXTI0				  CODE	    0003
+EXTI1				  CODE	    0013
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 6
+
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+F0				  BIT	      D5
+FRONT				  NUMBER    00B3	  28
+IE				  DATA	      A8
+IE0				  BIT	      89
+IE1				  BIT	      8B
+INT0				  BIT	      B2
+INT1				  BIT	      B3
+IP				  DATA	      B8
+IT0				  BIT	      88
+IT1				  BIT	      8A
+LEFT				  NUMBER    00B5	  29
+MAIN				  CODE	    000E	  64
+MOTOR				  NUMBER    0090	  34
+OUT_EN				  NUMBER    0083	  26
+OV				  BIT	      D2
+P				  BIT	      D0
+P0				  DATA	      80
+P1				  DATA	      90
+P2				  DATA	      A0
+P3				  DATA	      B0
+PCON				  DATA	      87
+PS				  BIT	      BC
+PSW				  DATA	      D0
+PT0				  BIT	      B9
+PT1				  BIT	      BB
+PX0				  BIT	      B8
+PX1				  BIT	      BA
+RB0				  NUMBER    0000	   3
+RB8				  BIT	      9A
+RD				  BIT	      B7
+READ_ADC			  CODE	    0024	  85
+READ_TEMP			  CODE	    0054	 118
+REN				  BIT	      9C
+RESET				  CODE	    0000
+RI				  BIT	      98
+RIGHT				  NUMBER    00B4	  30
+RP1				  CODE	    0094	 149
+RP1X				  CODE	    009E	 157
+RP2				  CODE	    0092	 148
+RP2X				  CODE	    009C	 156
+RRP1				  CODE	    00A8	 166
+RRP2				  CODE	    00A6	 165
+RS0				  BIT	      D3
+RS1				  BIT	      D4
+RXD				  BIT	      B0
+SBUF				  DATA	      99
+SCON				  DATA	      98
+SINT				  CODE	    0023
+SM0				  BIT	      9F
+SM1				  BIT	      9E
+SM2				  BIT	      9D
+SP				  DATA	      81
+STACK				  DATA	      21	  51
+START				  NUMBER    0080	   8
+T0				  BIT	      B4
+T1				  BIT	      B5
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 7
+
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+TB8				  BIT	      9B
+TCON				  DATA	      88
+TF0				  BIT	      8D
+TF1				  BIT	      8F
+TH0				  DATA	      8C
+TH1				  DATA	      8D
+TI				  BIT	      99
+TIMER0				  CODE	    000B
+TIMER1				  CODE	    001B
+TL0				  DATA	      8A
+TL1				  DATA	      8B
+TMOD				  DATA	      89
+TR0				  BIT	      8C
+TR1				  BIT	      8E
+TXD				  BIT	      B1
+VALUE				  DATA	      20	  49
+WR				  BIT	      B6
